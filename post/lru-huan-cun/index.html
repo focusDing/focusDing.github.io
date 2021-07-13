@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>LRU缓存 | focusDing&#39;s Blog</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://focusDing.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://focusDing.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="LRU缓存 | focusDing&#39;s Blog » Feed" href="https://focusDing.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://focusDing.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="LRU缓存"/>
+    <meta property="og:url" content="https://focusDing.github.io/post/lru-huan-cun/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="focusDing&#39;s Blog"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://focusDing.github.io">focusDing&#39;s Blog</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://focusDing.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+        </span>
+            <h1>LRU缓存</h1>
+            <span class="meta">
+            	Posted on
+              2021-05-21，5 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <h2 id="概述">概述</h2>
+<p>LRU是Least Recently Used的缩写，即最近最少使用，是一种常用的<strong style="color:blue">页面置换算法</strong>，选择最近最久未使用的页面予以淘汰。该算法赋予每个页面一个访问字段，用来记录一个页面自上次被访问以来所经历的时间t，当需要淘汰一个页面时，选择现有页面中其t值最大的，即最近最少使用的页面予以淘汰。</p>
+<h2 id="面试题目-手撕lru缓存代码">面试题目 手撕LRU缓存代码</h2>
+<p><a href="https://leetcode-cn.com/problems/lru-cache-lcci/">LRU缓存</a></p>
+<h3 id="实现方式一双向链表hashmap实现">实现方式一：双向链表+HashMap实现</h3>
+<h4 id="java">Java</h4>
+<pre><code class="language-java">class DLinkNode{
+    int key;
+    int val;
+    DLinkNode prev;
+    DLinkNode next;
+    public DLinkNode(){}
+    public DLinkNode(int _key,int _val){
+        key = _key;
+        val = _val;
+    }
+}
+
+public class LRUCache{
+    private int size;       //size用来检查缓存容量是否满
+    private int capacity;
+    private DLinkNode head,tail;
+    private Map&lt;Integer,DLinkNode&gt; cache = new HashMap&lt;&gt;(); //哈希索引
+    public LRUCache(int capacity){
+        size = 0;   //
+        this.capacity = capacity;
+        //前后加上头尾结点，方便操作
+        head = new DLinkNode();
+        tail = new DLinkNode();
+        head.next = tail;
+        tail.prev = head;   //连接两个结点 
+    }
+
+    public int get(int key){
+        //首先检查哈希索引 O(1)时间复杂度
+        DLinkNode node = cache.get(key);
+        if(node == null){
+            return -1;
+        }
+        //如果有，一定要记得将这个结点移动到头部结点
+        moveToHead(node);
+        return node.val;
+    }
+
+    public void put(int key,int val){
+        //首先检查哈希索引中是否存在这个key
+        DLinkNode node = cache.get(key);
+        if(node == null){
+            //如果不存在,则新建结点
+            DLinkNode newNode = new DLinkNode(key,val);
+
+            //插入之前检查缓存有没有满
+            if(size == capacity){
+                //删除最后一个结点
+                DLinkNode lastNode = removeLastNode();  //得到返回值，是为了从哈希中删除
+                cache.remove(lastNode.key);
+                --size;
+            }
+
+            //插入哈希索引
+            cache.put(key,newNode);
+            addToHead(newNode);    //添加到链表的头部结点
+            ++size; //更新size
+        }else{
+            //存在修改这个值
+            node.val = val;
+            moveToHead(node);   //一定要记得将这个结点移动到头部
+        }
+    }
+
+    private DLinkNode removeLastNode(){
+        DLinkNode lastNode = tail.prev;
+        removeNode(lastNode);
+        return lastNode;
+    }
+    private void moveToHead(DLinkNode node){ 
+        removeNode(node);//先将这个结点删掉
+        addToHead(node);    //然后再将这个结点添加到头部
+    }
+    private void removeNode(DLinkNode node){
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+    private void addToHead(DLinkNode node){
+        node.next = head.next;
+        node.prev = head;
+        head.next = node;
+        node.next.prev = node;
+    }
+}
+</code></pre>
+<h4 id="c">C++</h4>
+<pre><code class="language-C++">struct DLinkNode{
+    int key,val;
+    DLinkNode *prev;
+    DLinkNode *next;
+    DLinkNode():key(0),val(0),prev(nullptr),next(nullptr){}
+    DLinkNode(int _key,int _val):key(_key),val(_val),prev(nullptr),next(nullptr){}
+};
+
+class LRUCache {
+private:
+    unordered_map&lt;int,DLinkNode*&gt; cache;
+    DLinkNode* head,*tail;
+    int size,capacity;
+public:
+    LRUCache(int capacity) {
+        size = 0;
+        this-&gt;capacity = capacity;
+        head = new DLinkNode();
+        tail = new DLinkNode();
+        head-&gt;next = tail;
+        tail-&gt;prev = head;
+    }
+    
+    int get(int key) {
+        if(cache.count(key) == 0){
+            return -1;
+        }
+        //通过哈希索引查找是否存在，如果存在，返回值之前记着移动到头部元素
+        DLinkNode* node = cache[key];
+        moveToHead(node);
+        return node-&gt;val;
+    }
+    
+    void put(int key, int value) {
+        if(cache.count(key) == 0){
+            //如果不存在，需要重新创建结点
+            DLinkNode *newNode = new DLinkNode(key,value);
+            //插入之前检查缓存是否满
+            if(size == capacity){
+                //删除最后一个结点
+                DLinkNode *lastNode = removeLastNode();
+                cache.erase(lastNode-&gt;key);
+                delete lastNode;    //防止内存泄漏
+                --size;
+            }
+
+            cache[key] = newNode;
+            addToHead(newNode);
+            ++size;
+        }else{
+            DLinkNode *node = cache[key];
+            node-&gt;val = value;
+            moveToHead(node);
+        }
+    }
+
+    void moveToHead(DLinkNode* node){
+       
+        removeNode(node);    //断开
+        addToHead(node);        //连接到头部结点
+
+    }
+    void removeNode(DLinkNode* node){
+        node-&gt;prev-&gt;next = node-&gt;next;
+        node-&gt;next-&gt;prev = node-&gt;prev;
+        node-&gt;prev = nullptr;
+        node-&gt;next = nullptr;
+    }
+    void addToHead(DLinkNode* node){
+        node-&gt;next = head-&gt;next;
+        node-&gt;prev = head;
+        head-&gt;next-&gt;prev = node;
+        head-&gt;next = node;
+    }
+
+    DLinkNode* removeLastNode(){
+        DLinkNode* lastNode = tail-&gt;prev;
+        removeNode(lastNode);
+        return lastNode;
+    }
+};
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj-&gt;get(key);
+ * obj-&gt;put(key,value);
+ */
+</code></pre>
+<h2 id="参考">参考</h2>
+<p><a href="https://leetcode-cn.com/problems/lru-cache-lcci/">LRU-leetcode</a></p>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://focusDing.github.io/post/dan-li-mo-shi-singleton-pattern/">
+              <span class="post-title">
+                单例模式 Singleton Pattern&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://focusDing.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>focusDing&#39;s Blog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

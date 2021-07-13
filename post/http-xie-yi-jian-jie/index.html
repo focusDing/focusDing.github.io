@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>HTTP协议简介 | focusDing&#39;s Blog</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://focusDing.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://focusDing.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="HTTP协议简介 | focusDing&#39;s Blog » Feed" href="https://focusDing.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://focusDing.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="HTTP协议简介"/>
+    <meta property="og:url" content="https://focusDing.github.io/post/http-xie-yi-jian-jie/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="focusDing&#39;s Blog"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://focusDing.github.io">focusDing&#39;s Blog</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://focusDing.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+        </span>
+            <h1>HTTP协议简介</h1>
+            <span class="meta">
+            	Posted on
+              2021-05-25，3 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p><strong style="color:red">HTTP：超文本传输协议</strong>（HyperText Transfer Protocol）是当今互联网上应用最为广泛的一种网络协议。所有的WWW（万维网）文件都必须遵守这个标准。HTTP和TCP/IP协议等众多协议一样，用户<strong>客户端和服务端</strong>之间的通信。</p>
+<h2 id="http请求和响应">HTTP请求和响应</h2>
+<p>HTTP协议规定，在两台计算机之间使用HTTP协议进行通信时，在一条通信线路上必定有一端是客户端，另一端则是服务端。当在浏览器中输入网址访问某个网站时，你的浏览器（客户端）会将你的请求封装成一个HTTP请求发送给服务器站点，服务器接收到请求后会组织相应数据封装成一个HTTP响应返回给浏览器。</p>
+<h3 id="http请求报文">HTTP请求报文</h3>
+<p>HTTP请求报文由三大部分组成：</p>
+<ul>
+<li>请求行（必须在HTTP请求报文的第一行）</li>
+<li>请求头（从第二行开始，当第一个空行结束。请求头和请求体之间存在一个空行）</li>
+<li>请求体 （通常以键值对key，value方式传递数据）</li>
+</ul>
+<p>例子：<br>
+<img src="https://focusDing.github.io/post-images/1621922197403.png" alt="" loading="lazy"></p>
+<p>请求行开头的<code>post</code>表示访问服务器的类型，称为方法（method）。随后的字符串<code>/from/login</code>指明了请求访问的资源对象，也叫请求URI（request-URI）。最后的<code>HTTP/1.1</code>即HTTP的版本号，用来提示客户端使用的HTTP协议功能。</p>
+<h3 id="http请求方法">HTTP请求方法</h3>
+<p>请求行中的方法的作用在于可以指定请求的资源按照期望产生某种行为，即<strong style="color:red">使用方法给服务器下命令</strong><br>
+1）GET获取资源<br>
+GET方法用来请求访问已被URI识别的资源。指定资源经服务端解析后返回响应内容</p>
+<figure data-type="image" tabindex="1"><img src="https://focusDing.github.io/post-images/1621922630698.png" alt="" loading="lazy"></figure>
+<p>使用GET方法请求-响应的例子：<br>
+<img src="https://focusDing.github.io/post-images/1621922670467.png" alt="" loading="lazy"></p>
+<p>2）POST传输实体主体<br>
+POST主要用来传输数据，而GET主要用来获取资源。<br>
+<img src="https://focusDing.github.io/post-images/1621922750521.png" alt="" loading="lazy"></p>
+<p>使用 POST 方法请求-响应的例子：</p>
+<figure data-type="image" tabindex="2"><img src="https://focusDing.github.io/post-images/1621922778266.png" alt="" loading="lazy"></figure>
+<h3 id="http响应报文">HTTP响应报文</h3>
+<p>HTTP的响应报文也由三部分组成：<br>
+<img src="https://focusDing.github.io/post-images/1621923103732.png" alt="" loading="lazy"></p>
+<h2 id="http协议的缺点">HTTP协议的缺点</h2>
+<p>HTTP协议主要有三个缺点：</p>
+<ul>
+<li>通信使用明文（不加密），内容可能被<strong style="color:red">窃听</strong></li>
+<li>不验证通信双方的身份，因此有可能遭遇<strong style="color:red">伪装</strong></li>
+<li>无法证明报文的完整性，所以有可能被<strong style="color:red">篡改</strong></li>
+</ul>
+<p>为了解决以上问题，HTTPS应运而生</p>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://focusDing.github.io/post/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao/">
+              <span class="post-title">
+                二叉搜索树与双向链表&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://focusDing.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>focusDing&#39;s Blog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

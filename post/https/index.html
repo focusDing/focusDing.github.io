@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>HTTPS | focusDing&#39;s Blog</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://focusDing.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://focusDing.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="HTTPS | focusDing&#39;s Blog » Feed" href="https://focusDing.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://focusDing.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="HTTPS"/>
+    <meta property="og:url" content="https://focusDing.github.io/post/https/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="focusDing&#39;s Blog"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://focusDing.github.io">focusDing&#39;s Blog</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://focusDing.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+        </span>
+            <h1>HTTPS</h1>
+            <span class="meta">
+            	Posted on
+              2021-05-25，2 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <h2 id="安全的https">安全的HTTPS</h2>
+<p>HTTPS协议并非应用层的一个新协议，只是HTTP通信接口部分用SSL（Secure Socket Layer）和TLS（Transport layer Security）协议代替而已。通常HTTP是直接和TCP进行通信的，当使用SSL时，则演变成先和SSL通信，再由SSL和TCP进行通信。简而言之。<strong style="color:red">所谓HTTPS，就是身披SSL协议外壳的HTTP</strong></p>
+<figure data-type="image" tabindex="1"><img src="https://focusDing.github.io/post-images/1621926428160.png" alt="" loading="lazy"></figure>
+<p>在采用SSL后，HTTP就拥有了加密、证书和完整性保护等功能，而这些功能正是用来解决我们HTTP的不安全的因素带来的问题。</p>
+<h2 id="ssl的具体工作">SSL的具体工作</h2>
+<h3 id="加密">加密</h3>
+<h4 id="共享密钥加密">共享密钥加密</h4>
+<h4 id="公开密钥加密非对称加密">公开密钥加密（非对称加密）</h4>
+<p>公开密钥加密需要<strong style="color:blue">一组非对称的密钥对</strong>，分别是<strong>公钥</strong>public key和<strong>私钥</strong>private key。顾名思义，公钥可以随意发布，任何人都可以获得，而私钥不能让除通信双方外的任何其他人知道。这两个密钥成对出现的。注意：<strong style = "color:red">公钥加密的内容需要对应的私钥解密</strong>。<br>
+举个例子：客户端（浏览器）想要给网站服务器发送消息<br>
+server：服务器<br>
+browser：浏览器</p>
+<ul>
+<li>首先，网站服务器持有一组公钥和私钥，它会把自己的公钥明文（SpK)传输给客户端</li>
+<li>然后客户端利用服务端的公钥明文（SpK）给自己的消息进行加密，然后传输给服务器。</li>
+<li>最后，服务器收到加密的消息后，可以利用<strong>公钥对应的私钥进行解密</strong>。</li>
+</ul>
+<figure data-type="image" tabindex="2"><img src="https://focusDing.github.io/post-images/1621927429012.png" alt="" loading="lazy"></figure>
+<h4 id="混合加密方式">混合加密方式</h4>
+<p>公开密钥加密的方式虽然安全，但是处理速度慢很多。HTTPS综合使用以上两种加密方式的优势。<strong style="color:red">使用共享密钥加密要发送的信息，使用公开密钥加密这个共享密钥</stong>。这样就减少了公开加密的次数。举个例子：<br>
+<img src="https://focusDing.github.io/post-images/1621929504001.png" alt="" loading="lazy"></p>
+<h3 id="数字证书">数字证书</h3>
+<h3 id="数字签名">数字签名</h3>
+<h2 id="参考">参考</h2>
+<p><a href="https://mp.weixin.qq.com/s/NTZlUzu4R3xyWB5T6qWo9w">飞天小牛肉</a></p>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://focusDing.github.io/post/http-xie-yi-jian-jie/">
+              <span class="post-title">
+                HTTP协议简介&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://focusDing.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>focusDing&#39;s Blog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

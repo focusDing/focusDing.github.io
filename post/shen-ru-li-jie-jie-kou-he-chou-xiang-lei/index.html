@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>深入理解接口和抽象类 | focusDing&#39;s Blog</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://focusDing.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://focusDing.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="深入理解接口和抽象类 | focusDing&#39;s Blog » Feed" href="https://focusDing.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://focusDing.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="深入理解接口和抽象类"/>
+    <meta property="og:url" content="https://focusDing.github.io/post/shen-ru-li-jie-jie-kou-he-chou-xiang-lei/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="focusDing&#39;s Blog"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://focusDing.github.io">focusDing&#39;s Blog</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://focusDing.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+        </span>
+            <h1>深入理解接口和抽象类</h1>
+            <span class="meta">
+            	Posted on
+              2021-06-11，6 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>对于面向对象编程来说，抽象是它的特征之一。在Java中，可以通过两种形式来体现OOP的抽象：接口和抽象类。这两者容易混淆，现在总结下。</p>
+<h2 id="抽象类">抽象类</h2>
+<p>抽象方法是一种特殊的方法；它只有声明，而没有具体的实现。抽象方法的声明格式为：</p>
+<pre><code class="language-java">abstract void fun();
+</code></pre>
+<p>抽象方法必须用<code>abstract</code>关键字来修饰。如果一个类含有抽象方法，则称这个类为<strong>抽象类</strong>，抽象类必须在类前面用abstract关键字来修饰。<strong style="color:blue">因为抽象类中含有无具体实现的方法，所以不能用抽象类创建对象。</strong>。另外有个钻牛角尖的问题，抽象类不一定必须要包含抽象方法，也就是说抽象类中可以包含非抽象方法。</p>
+<p>包含抽象方法的类称为<strong>抽象类</strong>，但并不意味着抽象类只有抽象方法，它和普通类一样，同样可以拥有成员变量和成员方法。注意，抽象类和普通类的主要三点区别：</p>
+<ul>
+<li>抽象类必须用public或者protected(因为如果为private，则不能被子类继承，子类便无法实现该方法)</li>
+<li>抽象类不能用来创建对象</li>
+<li>如果一个类继承于另一个类，则子类必须实现父类的抽象方法。如果子类没有实现父类的抽象方法，则必须将子类也定义为abstract类。</li>
+</ul>
+<h2 id="接口">接口</h2>
+<p>接口，英文称作interface，在软件工程中，接口泛指供别人调用的方法或者函数。从这里，我们可以体会到Java语言设计者的初衷，它是对行为的抽象。在Java中，定义一个接口的形式如下：</p>
+<pre><code class="language-java">[public] interface InterfaceName{
+
+}
+</code></pre>
+<p>接口中可以含有<strong>变量和方法</strong>。但是需要注意，接口中的变量会被隐式地指定为<strong style="color:red">public static final</strong>变量，而方法会被隐式指定为<code>public abstract</code>方法。接口中所有的方法都不能有具体的实现，也就是说，接口中的方法必须都是抽象方法。接口是一种极端抽象的类型，它比抽象类更加“抽象”，并且一般情况下不在接口中定义变量。<br>
+要让一个类遵循某组特定的接口需要使用<code>implements</code>关键字，具体格式如下：</p>
+<pre><code class="language-java">class ClassName implements Interface1,Interface2,[...]{
+
+}
+</code></pre>
+<p><strong>JDK1.8对接口增加了新的特性</strong></p>
+<ul>
+<li>默认方法（default method）
+<ul>
+<li>JDK 1.8允许给接口添加非抽象的方法实现，但必须使用default关键字修饰；定义了default的方法可以不被实现子类所实现，但只能被实现子类的对象调用；如果子类实现了多个接口，并且这些接口包含一样的默认方法，则子类必须重写默认方法；</li>
+</ul>
+</li>
+<li>静态方法（static method）
+<ul>
+<li>JDK 1.8中允许使用static关键字修饰一个方法，并提供实现，称为接口静态方法。接口静态方法只能通过接口调用（接口名.静态方法名）</li>
+</ul>
+</li>
+</ul>
+<h2 id="抽象类与接口的区别">抽象类与接口的区别</h2>
+<h3 id="语法层面上">语法层面上</h3>
+<ol>
+<li>抽象类可以提供成员方法的实现细节，而接口中只能含有<code>public abstract</code>方法</li>
+<li>抽象类的成员变量可以是各种类型的，而接口中的成员变量只能是<code>public static final</code>类型的</li>
+<li>接口中不能含有静态代码块儿以及静态方法，而抽象类中可以有静态代码块儿和静态方法</li>
+<li>一个类只能继承一个抽象类，而一个类可以实现多个接口。</li>
+</ol>
+<h3 id="设计层面上">设计层面上</h3>
+<p>抽象类是对一种事务上的抽象，即对类抽象；而接口是对行为的抽象。抽象类是对类整体进行抽象，包括属性、行为。但是接口却是对类局部（行为）进行抽象。举个简单例子，飞机和鸟是不同类的事物，但是它们都有一个共性，就是都会飞。那么在设计的时候，可以将飞机设计为一个类Airplane，将鸟设计为一个类Bird。但是不能将飞行这个特性设计为类，因为它只是行为特性，并不是对一类事物的抽象描述。此时可以将飞行设计为一个接口Fly，包含方法fly()，然后飞机和鸟分别根据自己的需要实现飞行的接口。</p>
+<p>网上流传的一个例子：门和警报的例子。门都有open()和close()两个动作，此时我们通过抽象类和接口来定义这个抽象概念：</p>
+<pre><code class="language-java">abstract class Door{
+    public abstract void open();
+    public abstract void close();
+}
+</code></pre>
+<p>或者：</p>
+<pre><code class="language-java">interface Door{
+    public abstract void open();
+    public abstract void close();
+}
+</code></pre>
+<p>但是现在如果我们需要门具有报警<code>alarm()的功能</code>，那么该如何实现？下面提供两种思路：</p>
+<ol>
+<li>将这三个功能都放在抽象类中，但是这样一来所有继承这个抽象类的子类都具备了报警功能，但是有的门并不一定具备报警功能；</li>
+<li>将这三个功能都放在接口中。</li>
+</ol>
+<p>从这里可以看出，Door的open()、close()和alarm()根本就属于两个不同的范畴内的行为，open()和close()属于门本身固有的行为特性，而alarm()属于延申的附加行为。因此最好的解决办法是单独将报警设计为一个接口，包含alarm()行为，Door设计为单独的一个抽象类，包含open和close两种行为。再设计一个报警继承Door类，实现Alarm接口</p>
+<pre><code class="language-java">interface Alram {
+    void alarm();
+}
+ 
+abstract class Door {
+    void open();
+    void close();
+}
+ 
+class AlarmDoor extends Door implements Alarm {
+    void oepn() {
+      //....
+    }
+    void close() {
+      //....
+    }
+    void alarm() {
+      //....
+    }
+}
+</code></pre>
+<h2 id="参考资料">参考资料</h2>
+<p>http://blog.csdn.net/chenssy/article/details/12858267</p>
+<p>http://dev.yesky.com/436/7581936.shtml</p>
+<p>http://blog.csdn.net/xw13106209/article/details/6923556</p>
+<p>http://android.blog.51cto.com/268543/385282/</p>
+<p>http://peiquan.blog.51cto.com/7518552/1271610</p>
+<pre><code>    https://zhuanlan.zhihu.com/p/94770324
+</code></pre>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://focusDing.github.io/post/chou-shu/">
+              <span class="post-title">
+                丑数&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://focusDing.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>focusDing&#39;s Blog</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://focusDing.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

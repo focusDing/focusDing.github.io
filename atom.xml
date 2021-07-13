@@ -1,0 +1,674 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://focusDing.github.io</id>
+    <title>focusDing&apos;s Blog</title>
+    <updated>2021-07-13T02:57:51.138Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://focusDing.github.io"/>
+    <link rel="self" href="https://focusDing.github.io/atom.xml"/>
+    <subtitle>记录成长的点点滴滴</subtitle>
+    <logo>https://focusDing.github.io/images/avatar.png</logo>
+    <icon>https://focusDing.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2021, focusDing&apos;s Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[Java IO入门]]></title>
+        <id>https://focusDing.github.io/post/java-io-ru-men/</id>
+        <link href="https://focusDing.github.io/post/java-io-ru-men/">
+        </link>
+        <updated>2021-07-12T14:23:12.000Z</updated>
+        <content type="html"><![CDATA[<p>入门……</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[反转链表]]></title>
+        <id>https://focusDing.github.io/post/fan-zhuan-lian-biao/</id>
+        <link href="https://focusDing.github.io/post/fan-zhuan-lian-biao/">
+        </link>
+        <updated>2021-06-11T14:00:58.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="java实现">Java实现</h1>
+<pre><code class="language-java">import java.util.Scanner;
+
+
+class ListNode{
+    public int data;
+    public ListNode next;
+    public ListNode(int data){
+        this.data = data;
+    }
+}
+
+public class test
+{
+    public static void main(String[] args) {
+        ListNode head = new ListNode(0);
+        ListNode node1 = new ListNode(1);
+        ListNode node2 = new ListNode(2);
+        ListNode node3 = new ListNode(3);
+        head.next = node1;
+        node1.next = node2;
+        node2.next = node3;
+
+        System.out.println(&quot;翻转之前&quot;);
+        printList(head);
+        head = reverseList_1(head);
+        System.out.println(&quot;翻转之后&quot;);
+        printList(head);
+
+    }
+
+    private static void printList(ListNode head) {
+        ListNode p = head;
+        while (p != null){
+            System.out.println(p.data);
+            p = p.next;
+        }
+    }
+
+    public static ListNode reverseList_1(ListNode head){
+        if(head == null || head.next == null){
+            return head;
+        }
+        ListNode newHead = reverseList_1(head.next);
+        head.next.next = head;
+        head.next = null;
+        return newHead;
+    }
+}
+</code></pre>
+<h1 id="c实现">C++实现</h1>
+<pre><code class="language-c++">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+struct ListNode{
+	int val;
+	ListNode* next;
+	ListNode(int x):val(x),next(nullptr){
+	}
+};
+
+class Solution{
+public:
+	ListNode* reverseList(ListNode* head){
+		if(head == nullptr || head-&gt;next == nullptr){
+			return head;
+		}
+		ListNode* newHead = reverseList(head-&gt;next);
+		head-&gt;next-&gt;next = head;
+		head-&gt;next = nullptr;
+		return newHead;
+	}
+	
+	void printList(ListNode* head){
+		ListNode* p = head;
+		while(p != nullptr){
+			cout &lt;&lt; p-&gt;val &lt;&lt; &quot; &quot;;
+			p = p-&gt;next;
+		}
+		cout &lt;&lt; endl;
+	}
+};
+
+
+int main(){
+	ListNode* p,*head;
+	head = nullptr;
+	vector&lt;int&gt; vc = {1,2,3,4,5};
+	for(int i=0;i&lt;vc.size();i++){
+		ListNode *node = new ListNode(vc[i]);
+		if(head == nullptr){
+			head = node;
+			p = node;
+		}else{
+			p-&gt;next = node;
+			p = node;
+		}
+	}
+	Solution s;
+	cout &lt;&lt; &quot;反转之前：&quot; &lt;&lt; endl;
+	s.printList(head);
+	head = s.reverseList(head);
+	cout &lt;&lt; &quot;反转之后：&quot; &lt;&lt; endl;
+	s.printList(head);
+	return 0;
+} 
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[为什么双重检验锁需要volatile?]]></title>
+        <id>https://focusDing.github.io/post/wei-shi-me-shuang-chong-jian-yan-suo-xu-yao-volatile/</id>
+        <link href="https://focusDing.github.io/post/wei-shi-me-shuang-chong-jian-yan-suo-xu-yao-volatile/">
+        </link>
+        <updated>2021-06-11T11:22:01.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="引言">引言</h1>
+<p>**双重检查锁定（Double check locked）**模式经常会出现在一些框架源码中，目的是为了延迟初始化变量。这个模式还可以用来创建单例。下面看一个Spring中双重检查锁的例子<br>
+<img src="https://focusDing.github.io/post-images/1623410782940.png" alt="" loading="lazy"><br>
+这个例子中需要将配置文件加载到 handlerMappings中，由于读取资源比较耗时，所以将动作放到真正需要 handlerMappings 的时候。我们可以看到 handlerMappings 前面使用了volatile 。有没有想过为什么一定需要 volatile？虽然之前了解了双重检查锁定模式的原理，但是却忽略变量使用了 volatile。</p>
+<p>下面我们就来看下这背后的原因。</p>
+<h2 id="错误的延迟初始化的例子">错误的延迟初始化的例子</h2>
+<p>想要延迟初始化一个变量，最简单的例子就是取出变量进行判断。</p>
+<pre><code class="language-java">private Cache cache
+public Cache getCache(){
+    if(cache == null){
+        cache = new Cache();
+    }
+    return cache;
+}
+
+</code></pre>
+<p>这个例子在单线程环境下可以正常运行，但是在多线程环境就有可能会<strong style="color:blue">抛出空指针异常。</strong>为了防止这种情况，我们需要使用<code>synchronized</code>关键字</p>
+<h1 id="参考">参考</h1>
+<p>https://studyidea.cn/</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[合成词解析]]></title>
+        <id>https://focusDing.github.io/post/he-cheng-ci-jie-xi/</id>
+        <link href="https://focusDing.github.io/post/he-cheng-ci-jie-xi/">
+        </link>
+        <updated>2021-06-11T09:08:14.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="题目大意">题目大意</h1>
+<p>苏克·冯·望杜是印度著名的人工智能科学家。你正在试着阅读他的文章。但望杜写文章有个习惯，就是喜欢自己造词。他会利用现有的单词拼接上英语的一些前缀和后缀来快速造出一些新词。有些新词的组合十分复杂，读上去让人头大。作为程序员的你，很自然的想到可以写段代码把这些复杂的单词展开成词组以便理解。<br>
+作者：白羊deepinsea<br>
+链接：https://www.nowcoder.com/discuss/671162?type=2&amp;order=3&amp;pos=2&amp;page=1&amp;ncTraceId=&amp;channel=-1&amp;source_id=discuss_tag_nctrack<br>
+来源：牛客网</p>
+<p>已知的单词前缀和对应的含义有:<br>
+anti[word]: against [word]<br>
+post[word]: after [word]<br>
+pre[word]: before [word]<br>
+re[word]: [word] again<br>
+un[word]: not [word]</p>
+<p>已知的单词后缀和对应的含义有：<br>
+[word]er: one who [word]s<br>
+[word]ing: to actively [word]<br>
+[word]ize: change into [word]<br>
+[word]tion: the process of [word]ing<br>
+[word]ful: full of [word]<br>
+注意：后缀与原单词的关系更加紧密，所以需要最后展开。如果同时存在多个前缀和后缀，应以原单词为中心，前缀从右到左、后缀从左到右依次展开。<br>
+举个例子，unmodelize 的展开顺序如下：<br>
+unmodelize<br>
+not modelize<br>
+not change into model</p>
+<p>虽然以上定义不是完全准确，但阅读起来不影响理解。</p>
+<p>输入描述<br>
+输入信息为一个待展开的单词，所有字母均为小写，不含空格</p>
+<p>输出描述<br>
+按照题意进行展开后的单词</p>
+<h1 id="代码">代码</h1>
+<pre><code class="language-c++">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+bool endWith(string original,string target){
+  if(target.size() &gt; original.size()){
+  	return false;
+  }
+  int len = target.size();
+  int pos = original.size() - len;
+  string str = original.substr(pos);
+  return str == target;
+}
+bool startWith(string original,string target){
+  if(target.size() &gt; original.size()){
+  	return false;
+  }
+  int len = target.size();
+  string str = original.substr(0,len);
+  return str == target;
+}
+
+string myfold(string word){
+  //先处理前缀，然后处理后缀
+  //startWith，endWith + 递归逻辑完美匹配题目要求
+  //如果同时存在多个前缀和后缀，应以原单词为中心，前缀从右到左、后缀从左到右依次展开 
+  //前缀
+  if(startWith(word,&quot;anti&quot;)){
+  	return &quot;against &quot; + myfold(word.substr(4));
+  }else if(startWith(word,&quot;post&quot;)){
+  	return &quot;after &quot; + myfold(word.substr(4));
+  }else if(startWith(word,&quot;pre&quot;)){
+  	return &quot;before &quot; + myfold(word.substr(3));
+  }else if(startWith(word,&quot;un&quot;)){
+  	return &quot;not &quot; + myfold(word.substr(2));
+  }
+  
+  //后缀
+  if(endWith(word,&quot;er&quot;)){
+  	return &quot;one who &quot; + myfold(word.substr(0,word.size()-2))+&quot;s&quot;;
+  }else if(endWith(word,&quot;ing&quot;)){
+  	return &quot;to actively &quot; + myfold(word.substr(0,word.size()-3));
+  }else if(endWith(word,&quot;ize&quot;)){
+  	return &quot;change into &quot; + myfold(word.substr(0,word.size()-3));
+  }else if(endWith(word,&quot;tion&quot;)){
+  	return &quot;the process of &quot; + myfold(word.substr(0,word.size()-4));
+  }else if(endWith(word,&quot;ful&quot;)){
+  	return &quot;full of &quot; + myfold(word.substr(0,word.size()-3));
+  }else{
+  	return word;
+  }
+  
+}
+
+int main()
+{
+  string str;
+  cin &gt;&gt; str;
+  cout &lt;&lt; myfold(str);
+  return 0;	
+} 
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[深入理解接口和抽象类]]></title>
+        <id>https://focusDing.github.io/post/shen-ru-li-jie-jie-kou-he-chou-xiang-lei/</id>
+        <link href="https://focusDing.github.io/post/shen-ru-li-jie-jie-kou-he-chou-xiang-lei/">
+        </link>
+        <updated>2021-06-11T03:32:17.000Z</updated>
+        <content type="html"><![CDATA[<p>对于面向对象编程来说，抽象是它的特征之一。在Java中，可以通过两种形式来体现OOP的抽象：接口和抽象类。这两者容易混淆，现在总结下。</p>
+<h2 id="抽象类">抽象类</h2>
+<p>抽象方法是一种特殊的方法；它只有声明，而没有具体的实现。抽象方法的声明格式为：</p>
+<pre><code class="language-java">abstract void fun();
+</code></pre>
+<p>抽象方法必须用<code>abstract</code>关键字来修饰。如果一个类含有抽象方法，则称这个类为<strong>抽象类</strong>，抽象类必须在类前面用abstract关键字来修饰。<strong style="color:blue">因为抽象类中含有无具体实现的方法，所以不能用抽象类创建对象。</strong>。另外有个钻牛角尖的问题，抽象类不一定必须要包含抽象方法，也就是说抽象类中可以包含非抽象方法。</p>
+<p>包含抽象方法的类称为<strong>抽象类</strong>，但并不意味着抽象类只有抽象方法，它和普通类一样，同样可以拥有成员变量和成员方法。注意，抽象类和普通类的主要三点区别：</p>
+<ul>
+<li>抽象类必须用public或者protected(因为如果为private，则不能被子类继承，子类便无法实现该方法)</li>
+<li>抽象类不能用来创建对象</li>
+<li>如果一个类继承于另一个类，则子类必须实现父类的抽象方法。如果子类没有实现父类的抽象方法，则必须将子类也定义为abstract类。</li>
+</ul>
+<h2 id="接口">接口</h2>
+<p>接口，英文称作interface，在软件工程中，接口泛指供别人调用的方法或者函数。从这里，我们可以体会到Java语言设计者的初衷，它是对行为的抽象。在Java中，定义一个接口的形式如下：</p>
+<pre><code class="language-java">[public] interface InterfaceName{
+
+}
+</code></pre>
+<p>接口中可以含有<strong>变量和方法</strong>。但是需要注意，接口中的变量会被隐式地指定为<strong style="color:red">public static final</strong>变量，而方法会被隐式指定为<code>public abstract</code>方法。接口中所有的方法都不能有具体的实现，也就是说，接口中的方法必须都是抽象方法。接口是一种极端抽象的类型，它比抽象类更加“抽象”，并且一般情况下不在接口中定义变量。<br>
+要让一个类遵循某组特定的接口需要使用<code>implements</code>关键字，具体格式如下：</p>
+<pre><code class="language-java">class ClassName implements Interface1,Interface2,[...]{
+
+}
+</code></pre>
+<p><strong>JDK1.8对接口增加了新的特性</strong></p>
+<ul>
+<li>默认方法（default method）
+<ul>
+<li>JDK 1.8允许给接口添加非抽象的方法实现，但必须使用default关键字修饰；定义了default的方法可以不被实现子类所实现，但只能被实现子类的对象调用；如果子类实现了多个接口，并且这些接口包含一样的默认方法，则子类必须重写默认方法；</li>
+</ul>
+</li>
+<li>静态方法（static method）
+<ul>
+<li>JDK 1.8中允许使用static关键字修饰一个方法，并提供实现，称为接口静态方法。接口静态方法只能通过接口调用（接口名.静态方法名）</li>
+</ul>
+</li>
+</ul>
+<h2 id="抽象类与接口的区别">抽象类与接口的区别</h2>
+<h3 id="语法层面上">语法层面上</h3>
+<ol>
+<li>抽象类可以提供成员方法的实现细节，而接口中只能含有<code>public abstract</code>方法</li>
+<li>抽象类的成员变量可以是各种类型的，而接口中的成员变量只能是<code>public static final</code>类型的</li>
+<li>接口中不能含有静态代码块儿以及静态方法，而抽象类中可以有静态代码块儿和静态方法</li>
+<li>一个类只能继承一个抽象类，而一个类可以实现多个接口。</li>
+</ol>
+<h3 id="设计层面上">设计层面上</h3>
+<p>抽象类是对一种事务上的抽象，即对类抽象；而接口是对行为的抽象。抽象类是对类整体进行抽象，包括属性、行为。但是接口却是对类局部（行为）进行抽象。举个简单例子，飞机和鸟是不同类的事物，但是它们都有一个共性，就是都会飞。那么在设计的时候，可以将飞机设计为一个类Airplane，将鸟设计为一个类Bird。但是不能将飞行这个特性设计为类，因为它只是行为特性，并不是对一类事物的抽象描述。此时可以将飞行设计为一个接口Fly，包含方法fly()，然后飞机和鸟分别根据自己的需要实现飞行的接口。</p>
+<p>网上流传的一个例子：门和警报的例子。门都有open()和close()两个动作，此时我们通过抽象类和接口来定义这个抽象概念：</p>
+<pre><code class="language-java">abstract class Door{
+    public abstract void open();
+    public abstract void close();
+}
+</code></pre>
+<p>或者：</p>
+<pre><code class="language-java">interface Door{
+    public abstract void open();
+    public abstract void close();
+}
+</code></pre>
+<p>但是现在如果我们需要门具有报警<code>alarm()的功能</code>，那么该如何实现？下面提供两种思路：</p>
+<ol>
+<li>将这三个功能都放在抽象类中，但是这样一来所有继承这个抽象类的子类都具备了报警功能，但是有的门并不一定具备报警功能；</li>
+<li>将这三个功能都放在接口中。</li>
+</ol>
+<p>从这里可以看出，Door的open()、close()和alarm()根本就属于两个不同的范畴内的行为，open()和close()属于门本身固有的行为特性，而alarm()属于延申的附加行为。因此最好的解决办法是单独将报警设计为一个接口，包含alarm()行为，Door设计为单独的一个抽象类，包含open和close两种行为。再设计一个报警继承Door类，实现Alarm接口</p>
+<pre><code class="language-java">interface Alram {
+    void alarm();
+}
+ 
+abstract class Door {
+    void open();
+    void close();
+}
+ 
+class AlarmDoor extends Door implements Alarm {
+    void oepn() {
+      //....
+    }
+    void close() {
+      //....
+    }
+    void alarm() {
+      //....
+    }
+}
+</code></pre>
+<h2 id="参考资料">参考资料</h2>
+<p>http://blog.csdn.net/chenssy/article/details/12858267</p>
+<p>http://dev.yesky.com/436/7581936.shtml</p>
+<p>http://blog.csdn.net/xw13106209/article/details/6923556</p>
+<p>http://android.blog.51cto.com/268543/385282/</p>
+<p>http://peiquan.blog.51cto.com/7518552/1271610</p>
+<pre><code>    https://zhuanlan.zhihu.com/p/94770324
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[丑数]]></title>
+        <id>https://focusDing.github.io/post/chou-shu/</id>
+        <link href="https://focusDing.github.io/post/chou-shu/">
+        </link>
+        <updated>2021-06-06T08:25:03.000Z</updated>
+        <content type="html"><![CDATA[<p><a href="https://leetcode-cn.com/problems/chou-shu-lcof/">丑数</a></p>
+<h2 id="解法一最小堆">解法一：最小堆</h2>
+<p>要得到从小到大的第n个丑数，可以使用<strong>最小堆</strong>实现<br>
+初始时，堆为空。首先将最小的丑数1加入堆。<br>
+每次取出堆顶元素x，则x是堆中最小的丑数，由于2x，3x，5x也是丑数，因此将2x，3x，5x加入堆。<br>
+上述做法可能会导致堆中出现重复元素的情况。为了避免重复出现，可以使用哈希集合去重，避免相同元素多次加入堆。</p>
+<h3 id="代码实现">代码实现</h3>
+<pre><code class="language-c++">class Solution {
+    set&lt;long&gt; seen;  //记录丑数是否出现过
+public:
+    int nthUglyNumber(int n) {
+        priority_queue&lt;long,vector&lt;long&gt;,greater&lt;long&gt;&gt; heap;   //优先队列实现最小堆
+        vector&lt;int&gt; factors = {2,3,5};   //vector初始化
+        heap.push(1L);
+        seen.insert(1L);
+        long ugly = 0;
+        for(int i=0;i&lt;n;i++){
+            ugly = heap.top();
+            heap.pop();
+            for(int factor:factors){
+                long newUgly = factor*ugly;
+                if(seen.count(newUgly) == 0){
+                    seen.insert(newUgly);
+                    heap.push(newUgly);
+                }
+            }
+        }
+        return ugly;
+    }
+};
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[剪绳子]]></title>
+        <id>https://focusDing.github.io/post/jian-sheng-zi/</id>
+        <link href="https://focusDing.github.io/post/jian-sheng-zi/">
+        </link>
+        <updated>2021-06-02T06:40:14.000Z</updated>
+        <content type="html"><![CDATA[<p><a href="https://leetcode-cn.com/problems/jian-sheng-zi-lcof/">剪绳子</a></p>
+<h2 id="解法一找规律">解法一：找规律</h2>
+<p>n     乘积     组合<br>
+2       1       1 1<br>
+3       2       2<br>
+4       4       4</p>
+<p>5       6       2 3<br>
+6       9       3 3<br>
+7       12      4 3</p>
+<p>8       18      2 3 3<br>
+9       27      3 3 3<br>
+10      36      4 3 3</p>
+<p>11      54      2 3 3 3</p>
+<p>规律很明显，代码如下</p>
+<pre><code class="language-c++">class Solution {
+public:
+    int cuttingRope(int n) {
+        if(n == 2){
+            return 1;
+        }
+        if(n == 3){
+            return 2;
+        }
+        int res = 1;
+        while( n &gt; 4){
+            n -= 3;
+            res = res*3;
+        }
+        return n*res;
+    }
+};
+</code></pre>
+<h2 id="解法二动态规划">解法二：动态规划</h2>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[平衡二叉树]]></title>
+        <id>https://focusDing.github.io/post/ping-heng-er-cha-shu/</id>
+        <link href="https://focusDing.github.io/post/ping-heng-er-cha-shu/">
+        </link>
+        <updated>2021-05-27T13:12:15.000Z</updated>
+        <content type="html"><![CDATA[<p><a href="https://leetcode-cn.com/problems/ping-heng-er-cha-shu-lcof/">平衡二叉树</a></p>
+<h1 id="什么是平衡二叉树">什么是平衡二叉树？</h1>
+<p><strong>平衡二叉树（Balanced Binary Tree）</strong>：具有以下性质：它是一棵空树或它的左右两个字数的高度差的绝对值不超过1，并且左右两个子树都是一颗平衡二叉树</p>
+<h1 id="方法一后序遍历-剪枝">方法一：后序遍历 + 剪枝</h1>
+<p>思路是对二叉树做后序遍历，从底至顶返回子树的深度，若判定子树不是平衡树则“剪枝”，直接向上返回。</p>
+<h1 id="算法流程">算法流程</h1>
+<p>recur(root)函数：</p>
+<ul>
+<li>返回值：
+<ul>
+<li>当结点root左右子树的深度差 &lt;= 1：则返回当前子树的深度，即结点root左右子树深度最大值+1</li>
+<li>当结点root左右子树的深度差 &gt;2：则返回-1，代表<strong>此树不是平衡二叉树</strong>，直接剪枝。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-c++">/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isBalanced(TreeNode* root) {
+        return recur(root) != -1;
+    }
+
+    int recur(TreeNode* t){
+        if(t == NULL){
+            return 0;
+        }
+        int leftH = recur(t-&gt;left); //左子树高度
+        if(leftH == -1){
+            //左子树不是平衡二叉树，直接返回
+            return -1;
+        }
+        int rightH = recur(t-&gt;right);   //右子树高度
+        if(rightH == -1){
+            //右子树不是平衡二叉树，直接返回
+            return -1;
+        }
+
+        return abs(leftH-rightH) &gt; 1?-1:max(leftH,rightH)+1;
+    }
+};
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[看懂UML类图]]></title>
+        <id>https://focusDing.github.io/post/kan-dong-uml-lei-tu/</id>
+        <link href="https://focusDing.github.io/post/kan-dong-uml-lei-tu/">
+        </link>
+        <updated>2021-05-25T13:11:09.000Z</updated>
+        <content type="html"><![CDATA[<p>对于技术人员来讲，在开发过程中至少需要掌握类图、用例图、时序图的使用。通过这篇文章的总结，我向能够掌握基本的UML类图。</p>
+<h1 id="类图中具体类-抽象-接口和包的表示方法">类图中具体类、抽象、接口和包的表示方法</h1>
+<p>UML类图中具体类、抽象类、接口和包有不同的表示方法。</p>
+<h2 id="在uml类图中表示具体类">在UML类图中表示具体类</h2>
+<p>具体类在类图中用<strong>矩形框</strong>表示，矩形框分为三层：<strong>第一层是类名字。第二层是类的成员变量；第三层是类的方法</strong>。成员变量以及方法前的访问修饰符用符号来表示：</p>
+<ul>
+<li>“+”表示 public；</li>
+<li>“-”表示 private；</li>
+<li>“#”表示 protected；</li>
+<li>不带符号表示 default。<br>
+<img src="https://focusDing.github.io/post-images/1621948732648.png" alt="" loading="lazy"></li>
+</ul>
+<h2 id="在uml类图中表示抽象类">在UML类图中表示抽象类</h2>
+<p>抽象类在UML类图中同样用<strong>矩形框</strong>表示，但是<strong>抽象类的类名以及抽象方法的名字都用斜体字</strong>表示，如图所示。<br>
+<img src="https://focusDing.github.io/post-images/1621949648108.png" alt="" loading="lazy"></p>
+<h2 id="在uml类图中表示接口">在UML类图中表示接口</h2>
+<p>接口在类图中也是用<strong>矩形框</strong>表示，但是与类的表示法不同的是，接口在类图中的第一层顶端用构造型 **&lt;<interface>&gt;**表示，下面是接口的名字，第二层是方法，如图所示。此外，接口还有另一种表示法，俗称棒棒糖表示法，就是类上面的一根棒棒糖（圆圈+实线）。圆圈旁为接口名称，接口方法在实现类中出现。<br>
+<img src="https://focusDing.github.io/post-images/1621950072043.png" alt="" loading="lazy"></p>
+<h2 id="在uml类图中表示包">在UML类图中表示包</h2>
+<figure data-type="image" tabindex="1"><img src="https://focusDing.github.io/post-images/1621950132339.png" alt="" loading="lazy"></figure>
+<h2 id="在类图中表示关系">在类图中表示关系</h2>
+<p>类和类、类和接口、接口和接口之间存在一定关系，UML类图一般会有连线指明它们之间的关系。关系有六种类型，分别是实现关系、泛化关系、关联关系、依赖关系、聚合关系、组合关系等。如下图所示<br>
+<img src="https://focusDing.github.io/post-images/1621950344019.png" alt="" loading="lazy"></p>
+<h3 id="实现关系">实现关系</h3>
+<p>实现关系是指接口及其实现类之间的关系。在UML类图中，<strong>实现关系用空心三角和虚线组成的箭头</strong>来表示，从实现类指向接口，如图1.9所示。在Java代码中，实现关系可以直接翻译为关键字 implements。<br>
+<img src="https://focusDing.github.io/post-images/1621950492091.png" alt="" loading="lazy"></p>
+<h3 id="泛化关系">泛化关系</h3>
+<p>泛化关系（Generalization）是指对象与对象之间的继承关系。如果对象A和对象B之间的“is-a”关系成立，那么二者之间就存在继承关系，对象B是父对象，对象A是子对象。例如，一个年薪制的员工“is-a”员工。<br>
+在UML类图中，<strong>泛化关系用空心三角和实线组成的箭头</strong>表示，从子类指向父类，如图8所示。在Java代码中，对象之间的泛化关系可以直接翻译为关键字 extends。<br>
+<img src="https://focusDing.github.io/post-images/1621951081401.png" alt="" loading="lazy"></p>
+<h3 id="关联关系">关联关系</h3>
+<p>关联关系（Association）是指对象和对象之间的连接，它使一个对象知道另一个对象的属性和方法。在Java中，<strong>关联关系的代码表现形式为一个对象含有另一个对象的引用</strong>。也就是说，如果一个对象的类代码中，包含有另一个对象的引用，那么这两个对象之间就是关联关系。<br>
+<img src="https://focusDing.github.io/post-images/1621954821994.png" alt="" loading="lazy"></p>
+<h3 id="依赖关系">依赖关系</h3>
+<p>依赖（Dependency）关系是一种弱关联关系。如果对象A用到对象B，但是和B的关系不是太明显的时候，就可以把这种关系看作是依赖关系。如果对象A依赖于对象B，则 A “use a” B。比如驾驶员和汽车的关系，驾驶员使用汽车，二者之间就是依赖关系。<br>
+在UML类图中，依赖关系用一个带虚线的箭头表示，由使用方指向被使用方，表示使用方对象持有被使用方对象的引用，如图所示。<br>
+<img src="https://focusDing.github.io/post-images/1621994603052.png" alt="" loading="lazy"></p>
+<h3 id="聚合关系">聚合关系</h3>
+<p>聚合（Aggregation）是关联关系的一种特例，它体现的是<strong>整体与部分的拥有关系</strong>，即 “has a” 的关系。此时整体与部分之间是可分离的，它们可以具有各自的生命周期，部分可以属于多个整体对象，也可以为多个整体对象共享，所以聚合关系也常称为共享关系。例如，公司部门与员工的关系，一个员工可以属于多个部门，一个部门撤消了，员工可以转到其它部门。<br>
+<img src="https://focusDing.github.io/post-images/1621995358492.png" alt="" loading="lazy"></p>
+<h2 id="组合关系">组合关系</h2>
+<p>组合（Composition）也是关联关系的一种特例，它同样体现整体与部分间的包含关系，即 “contains a” 的关系。但此时整体与部分是不可分的，部分也不能给其它整体共享，作为整体的对象负责部分的对象的生命周期。这种关系比聚合更强，也称为强聚合。如果A组合B，则A需要知道B的生存周期，即可能A负责生成或者释放B，或者A通过某种途径知道B的生成和释放。</p>
+<p>例如，人包含头、躯干、四肢，它们的生命周期一致。当人出生时，头、躯干、四肢同时诞生。当人死亡时，作为人体组成部分的头、躯干、四肢同时死亡。<br>
+<img src="https://focusDing.github.io/post-images/1621995414075.png" alt="" loading="lazy"></p>
+<h1 id="参考">参考</h1>
+<p><a href="https://zhuanlan.zhihu.com/p/109655171">30分钟学会UML类图</a></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[简单工厂模式Simple Factory]]></title>
+        <id>https://focusDing.github.io/post/jian-dan-gong-han-mo-shi-simple-factory/</id>
+        <link href="https://focusDing.github.io/post/jian-dan-gong-han-mo-shi-simple-factory/">
+        </link>
+        <updated>2021-05-25T12:34:32.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="含义">含义</h1>
+<ul>
+<li>简单工厂模式又叫静态方法模式（因为工厂类定义了一个静态方法）</li>
+<li>现实生活中，工厂负责生产产品的；同样在设计模式中，简单工厂模式我们可以理解为负责生产对象的一个类，称为“工厂类”。</li>
+</ul>
+<p>在简单工厂模式中，可以根据参数的不同返回不同类的实例。<strong style="color:blue">简单工厂模式专门定义一个类来负责创建其他类的实例，被创建的实例通常都具有共同的父类</strong></p>
+<h1 id="解决的问题模式动机">解决的问题/模式动机</h1>
+<p><strong style="color:red">在创建一个对象时不向客户暴露内部细节，并提供一个创建对象的通用接口</strong>。即使用者可直接消费产品而不需要知道其生产的细节</p>
+<h1 id="模式结构">模式结构</h1>
+<p>简单工厂模式包含如下角色：</p>
+<ul>
+<li>Factory：工厂角色     工厂角色负责实现创建所有实例的内部逻辑（决定调用哪个类来创建实例）</li>
+<li>AbstractProduct：抽象产品角色     抽象产品角色是所创建的所有对象的父类，负责描述所有实例所共有的公共接口</li>
+<li>ConcreteProduct：具体产品角色     具体产品角色是创建目标，所有创建的对象都充当这个角色的某个具体类的实例</li>
+</ul>
+<p><strong>这样做可以把客户类和具体子类实现解耦</strong>，客户类不再需要知道有哪些子类以及应当实例化哪个子类。客户类往往有多个，如果不再使用简单工厂，那么所有的的客户类都需要知道所有子类的细节。<strong>而且一旦子类发生改变，例如增加子类，那么所有的客户类都要进行修改</strong>。</p>
+<figure data-type="image" tabindex="1"><img src="https://focusDing.github.io/post-images/1622009911503.png" alt="" loading="lazy"></figure>
+<h1 id="代码实例">代码实例</h1>
+<p><strong style="color:blue">一个抽象接口，多个抽象接口的实现类，一个工厂类——用来实例化接口</strong></p>
+<h2 id="接口抽象类product">接口/抽象类（Product）</h2>
+<h3 id="使用步骤">使用步骤</h3>
+<h4 id="步骤1创建抽象产品类定义具体产品的公共接口创建具体产品类定义生产的具体产品">步骤1.创建抽象产品类，定义具体产品的公共接口；创建具体产品类，定义生产的具体产品</h4>
+<pre><code class="language-java">
+abstract class Product {
+    public abstract void Show();
+}
+
+class ProductA extends Product{
+
+    @Override
+    public void Show() {
+        System.out.println(&quot;生产出了产品A&quot;);
+    }
+}
+
+class ProductB extends Product{
+
+    @Override
+    public void Show() {
+        System.out.println(&quot;生产出了产品B&quot;);
+    }
+}
+
+class ProductC extends Product{
+
+    @Override
+    public void Show() {
+        System.out.println(&quot;生产出了产品C&quot;);
+    }
+}
+</code></pre>
+<h4 id="步骤2创建工厂类通过创建静态方法从而根据传入不同参数创建不同具体产品类的实例">步骤2.创建工厂类，通过创建静态方法从而根据传入不同参数创建不同具体产品类的实例</h4>
+<pre><code class="language-java">public class Factory {
+
+    public static Product Manufacture(String ProductName){
+        //工厂类用switch语句控制生产哪种商品
+        //使用者只需要调用工厂类的静态方法就可以实现产品类的实例化
+        if (ProductName == &quot;A&quot;) {
+            return new ProductA();
+        }else if(ProductName == &quot;B&quot;){
+            return new ProductB();
+        }else if(ProductName == &quot;C&quot;){
+            return new ProductC();
+        }
+        return null;
+    }
+}
+</code></pre>
+<h4 id="步骤3外界通过调用工厂类的静态方法传入不同参数从而创建不同产品类的实例">步骤3.外界通过调用工厂类的静态方法，传入不同参数从而创建不同产品类的实例</h4>
+<pre><code class="language-java">public class SimpleFactoryPattern {
+
+    public static void main(String[] args) {
+        Factory myFactory = new Factory();
+
+        try{
+            myFactory.Manufacture(&quot;A&quot;).Show();
+        }catch (NullPointerException e){
+            System.out.println(&quot;没有这一类产品&quot;);
+        }
+
+        try{
+            myFactory.Manufacture(&quot;B&quot;).Show();
+        }catch (NullPointerException e){
+            System.out.println(&quot;没有这一类产品&quot;);
+        }
+
+        try{
+            myFactory.Manufacture(&quot;C&quot;).Show();
+        }catch (NullPointerException e){
+            System.out.println(&quot;没有这一类产品&quot;);
+        }
+
+        try{
+            myFactory.Manufacture(&quot;D&quot;).Show();
+        }catch (NullPointerException e){
+            System.out.println(&quot;没有这一类产品&quot;);
+        }
+    }
+}
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://focusDing.github.io/post-images/1622014227582.png" alt="" loading="lazy"></figure>
+<h2 id="优点">优点</h2>
+<ul>
+<li>将创建实例的工作与使用实例的工作分开，使用者不必关系类对象如何创建，实现了解耦</li>
+</ul>
+<h2 id="缺点">缺点</h2>
+<ul>
+<li>工厂类集中了所有实例的创建逻辑，一旦这个工厂不能正常工作，整个系统都会受到影响</li>
+</ul>
+<h1 id="参考">参考</h1>
+<p><a href="https://veal98.gitee.io/cs-wiki/#/Java/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/0-%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F">CS-WIKI</a></p>
+<p><a href="https://www.jianshu.com/p/e55fbddc071c">简书</a></p>
+]]></content>
+    </entry>
+</feed>
